@@ -1,6 +1,4 @@
 # Ethereum Node Operations Guide
-*For Technical and Non-Technical Team Members*
-*Updated: December 2025*
 
 ---
 
