@@ -12,7 +12,6 @@
 5. [Hardware & Network Requirements](#hardware--network-requirements)
 6. [Validator Operations](#validator-operations)
 7. [Economics & Rewards](#economics--rewards)
-8. [Security & Best Practices](#security--best-practices)
 9. [Common Questions](#common-questions)
 10. [Quick Reference](#quick-reference)
 
@@ -460,71 +459,7 @@ Occurs for provably malicious behavior:
 - Limited number of validators can exit per day
 - Prevents mass exits during instability
 - Longer wait times during high exit demand
-
----
-
-## Security & Best Practices
-
-### Key Management
-
-**Critical Rules:**
-1. **Never share your mnemonic or private keys**
-2. **Store mnemonic offline** (paper, metal backup)
-3. **Use hardware wallets** when possible for withdrawal credentials
-4. **Separate validator keys from withdrawal keys**
-
-**Validator Key Security:**
-- Keep validator keys on the validator server (needed for signing)
-- Encrypt keystore files with strong passwords
-- Limit SSH access to validator machine
-- Use Web3Signer for better key isolation
-
-### Operational Security
-
-**Best Practices:**
-1. **Dedicated Machine**: Don't run other services on validator
-2. **Firewall**: Only open necessary ports
-3. **No RPC Exposure**: Keep JSON-RPC on localhost or trusted network
-4. **Regular Updates**: Keep clients updated (security patches)
-5. **Monitoring**: Set up alerts for offline/missed duties
-6. **Backups**: Backup slashing protection DB regularly
-7. **Physical Security**: Secure physical access to server
-
-**Redundancy Strategies:**
-
-**Option 1: Hot Backup (Risky)**
-- Secondary server ready to take over
-- **Risk**: Both servers could sign simultaneously = slashing
-- Requires careful automation
-
-**Option 2: Distributed Validator Technology (DVT)**
-- Split validator key across multiple nodes
-- Requires threshold of nodes to sign (e.g., 3 of 5)
-- More resilient, no single point of failure
-- Examples: SSV Network, Obol
-
-**Option 3: Accept Downtime**
-- Simple single-server setup
-- Accept occasional penalties
-- Usually more profitable than complex setups
-
-### Common Attack Vectors
-
-**Phishing:**
-- Fake validator setup guides
-- Malicious key generators
-- Always use official tools from ethereum.org
-
-**Server Compromise:**
-- Weak SSH passwords
-- Unpatched vulnerabilities
-- Use key-based SSH auth, disable password login
-
-**Social Engineering:**
-- "Support" asking for keys
-- Fake "emergency" withdrawal requests
-- Ethereum Foundation never contacts validators directly
-
+  
 ---
 
 ## Common Questions
@@ -635,9 +570,3 @@ A: Maximal Extractable Value - additional profit from ordering transactions opti
 **Mempool**: Pool of pending transactions waiting for inclusion in blocks.
 
 **JSON-RPC**: API that applications use to interact with your node.
-
-### Quick Command Reference
-
-**Check Sync Status (Geth):**
-```bash
-geth attach --exec eth.syncing
