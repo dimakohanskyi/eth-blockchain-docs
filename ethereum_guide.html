@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ethereum Node & Validator Guide - Visual Explainer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .card-hover {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+        }
+        @keyframes pulse-slow {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .pulse-slow {
+            animation: pulse-slow 2s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-900">
+    
+    <!-- Header -->
+    <header class="gradient-bg text-white py-12 shadow-lg">
+        <div class="container mx-auto px-4">
+            <h1 class="text-5xl font-bold mb-4 flex items-center">
+                <i class="fas fa-cubes mr-4"></i>
+                Ethereum Node & Validator Guide
+            </h1>
+            <p class="text-xl text-purple-100">Visual guide to understanding Ethereum's Proof of Stake architecture</p>
+        </div>
+    </header>
+
+    <div class="container mx-auto px-4 py-12">
+
+        <!-- Two-Client Architecture -->
+        <section class="mb-16">
+            <h2 class="text-4xl font-bold mb-8 flex items-center text-gray-800">
+                <i class="fas fa-network-wired mr-3 text-purple-600"></i>
+                The Two-Client Architecture
+            </h2>
+            
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <p class="text-lg text-gray-700 mb-8">
+                    Ethereum requires <strong>two pieces of software</strong> working together since The Merge (Sept 2022)
+                </p>
+                
+                <div class="grid md:grid-cols-2 gap-8">
+                    <!-- Execution Client -->
+                    <div class="border-4 border-blue-500 rounded-lg p-6 card-hover bg-blue-50">
+                        <div class="flex items-center mb-4">
+                            <i class="fas fa-cog text-4xl text-blue-600 mr-4"></i>
+                            <h3 class="text-2xl font-bold text-blue-700">Execution Client (EL)</h3>
+                        </div>
+                        <ul class="space-y-3 text-gray-700">
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-blue-500 mr-2 mt-1"></i>
+                                <span>Runs the <strong>EVM</strong> (Ethereum Virtual Machine)</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-blue-500 mr-2 mt-1"></i>
+                                <span>Processes <strong>transactions</strong> & smart contracts</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-blue-500 mr-2 mt-1"></i>
+                                <span>Maintains <strong>account balances</strong></span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-blue-500 mr-2 mt-1"></i>
+                                <span>Manages <strong>mempool</strong> (pending txs)</span>
+                            </li>
+                        </ul>
+                        <div class="mt-6 bg-blue-100 rounded p-3">
+                            <p class="text-sm font-semibold text-blue-800">Examples:</p>
+                            <p class="text-blue-700">Geth, Nethermind, Erigon, Besu, Reth</p>
+                        </div>
+                    </div>
+
+                    <!-- Consensus Client -->
+                    <div class="border-4 border-green-500 rounded-lg p-6 card-hover bg-green-50">
+                        <div class="flex items-center mb-4">
+                            <i class="fas fa-vote-yea text-4xl text-green-600 mr-4"></i>
+                            <h3 class="text-2xl font-bold text-green-700">Consensus Client (CL)</h3>
+                        </div>
+                        <ul class="space-y-3 text-gray-700">
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                                <span>Handles <strong>Proof of Stake</strong> logic</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                                <span>Manages <strong>validator committees</strong></span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                                <span>Coordinates <strong>block proposals</strong></span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                                <span>Determines <strong>chain finality</strong></span>
+                            </li>
+                        </ul>
+                        <div class="mt-6 bg-green-100 rounded p-3">
+                            <p class="text-sm font-semibold text-green-800">Examples:</p>
+                            <p class="text-green-700">Lighthouse, Prysm, Teku, Nimbus, Lodestar</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-8 bg-purple-100 border-l-4 border-purple-600 p-6 rounded">
+                    <p class="flex items-start text-purple-900">
+                        <i class="fas fa-info-circle text-2xl mr-3 mt-1"></i>
+                        <span class="text-lg">
+                            <strong>Why both?</strong> Separation allows each layer to be optimized independently while maintaining security and decentralization.
+                        </span>
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- How Blocks Are Created -->
+        <section class="mb-16">
+            <h2 class="text-4xl font-bold mb-8 flex items-center text-gray-800">
+                <i class="fas fa-cube mr-3 text-purple-600"></i>
+                How Blocks Are Created (Every 12 Seconds)
+            </h2>
+            
+            <div class="bg-white rounded-lg shadow-lg p-8">
+                <div class="grid md:grid-cols-3 gap-6 mb-8">
+                    <!-- Step 1: Slot Selection -->
+                    <div class="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-lg p-6 border-2 border-yellow-400">
+                        <div class="flex items-center mb-4">
+                            <span class="bg-yellow-500 text-white rounded-full w-10 h-10 flex items-center justify-center font-bold text-xl mr-3">1</span>
+                            <h3 class="text-xl font-bold text-gray-800">Random Selection</h3>
+                        </div>
+                        <i class="fas fa-random text-6xl text-yellow-500 mb-4"></i>
+                        <p class="text-gray-700">
+                            Every <strong>12-second slot</strong>, one validator is randomly selected to <strong>propose</strong> the next block
+                        </p>
+                    </div>
+
+                    <!-- Step 2: Proposing -->
+                    <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-6 border-2 border-blue-400">
+                        <div class="flex items-center mb-4">
+                            <span class="bg-blue-500 text-white rounded-full w-10 h-10 flex items-center justify-center font-bold text-xl mr-3">2</span>
+                            <h3 class="text-xl font-bold text-gray-800">Proposing</h3>
+                        </div>
+                        <i class="fas fa-paper-plane text-6xl text-blue-500 mb-4 pulse-slow"></i>
+                        <p class="text-gray-700 mb-3">The proposer:</p>
+                        <ul class="text-sm text-gray-600 space-y-1">
+                            <li>• Collects transactions</li>
+                            <li>• Builds a new block</li>
+                            <li>• Broadcasts to network</li>
+                            <li>• Earns rewards</li>
+                        </ul>
+                    </div>
+
+                    <!-- Step 3: Attesting -->
+                    <div class="bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-6 border-2 border-green-400">
+                        <div class="flex items-center mb-4">
+                            <span class="bg-green-500 text-white rounded-full w-10 h-10 flex items-center justify-center font-bold text-xl mr-3">3</span>
+                            <h3 class="text-xl font-bold text-gray-800">Attesting</h3>
+                        </div>
+                        <i class="fas fa-thumbs-up text-6xl text-green-500 mb-4"></i>
+                        <p class="text-gray-700 mb-3">Other validators:</p>
+                        <ul class="text-sm text-gray-600 space-y-1">
+                            <li>• Verify the block</li>
+                            <li>• Vote (attest) it's valid</li>
+                            <li>• Sign their vote</li>
+                            <li>• Broadcast attestation</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Finality -->
+                <div class="bg-gradient-to-r from-purple-100 to-pink-100 rounded-lg p-6 border-2 border-purple-400">
+                    <div class="flex items-center mb-4">
+                        <i class="fas fa-lock text-4xl text-purple-600 mr-4"></i>
+                        <h3 class="text-2xl font-bold text-gray-800">Finality</h3>
+                    </div>
+                    <p class="text-gray-700 text-lg">
+                        After <strong>⅔ of total staked ETH</strong> agrees on checkpoints (about <strong>12-19 minutes</strong>), those blocks become <strong>final</strong> and cannot be reversed
+                    </p>
+                </div>
+
+                <div class="mt-6 bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded">
+                    <p class="text-yellow-800 flex items-start">
+                        <i class="fas fa-clock mr-2 mt-1"></i>
+                        <span><strong>Time Units:</strong> 1 Slot = 12 seconds | 1 Epoch = 32 slots (~6.4 minutes)</span>
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Node Types -->
+        <section class="mb-16">
+            <h2 class="text-4xl font-bold mb-8 flex items-center text-gray-800">
+                <i class="fas fa-server mr-3 text-purple-600"></i>
+                Node Types Comparison
+            </h2>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Full Node -->
+                <div class="bg-white rounded-lg shadow-lg p-6 card-hover border-t-4 border-blue-500">
+                    <i class="fas fa-desktop text-5xl text-blue-500 mb-4"></i>
+                    <h3 class="text-xl font-bold mb-3 text-gray-800">Full Node</h3>
+                    <div class="mb-4">
+                        <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-semibold">No ETH Required</span>
+                    </div>
+                    <ul class="text-sm text-gray-600 space-y-2 mb-4">
+                        <li>• Downloads all blocks</li>
+                        <li>• Verifies everything</li>
+                        <li>• Serves data to apps</li>
+                        <li>• Does NOT validate</li>
+                    </ul>
+                    <div class="bg-blue-50 rounded p-3 text-xs">
+                        <p class="font-semibold text-blue-900">Storage:</p>
+                        <p class="text-blue-700">~700 GB - 1 TB</p>
+                    </div>
+                </div>
+
+                <!-- Validator Node -->
+                <div class="bg-white rounded-lg shadow-lg p-6 card-hover border-t-4 border-green-500">
+                    <i class="fas fa-shield-alt text-5xl text-green-500 mb-4"></i>
+                    <h3 class="text-xl font-bold mb-3 text-gray-800">Validator Node</h3>
+                    <div class="mb-4">
+                        <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-semibold">32 ETH Required</span>
+                    </div>
+                    <ul class="text-sm text-gray-600 space-y-2 mb-4">
+                        <li>• Full node PLUS</li>
+                        <li>• Proposes blocks</li>
+                        <li>• Attests to blocks</li>
+                        <li>• Earns staking rewards</li>
+                    </ul>
+                    <div class="bg-green-50 rounded p-3 text-xs">
+                        <p class="font-semibold text-green-900">Uptime:</p>
+                        <p class="text-green-700">&gt;99% required</p>
+                    </div>
+                </div>
+
+                <!-- Archive Node -->
+                <div class="bg-white rounded-lg shadow-lg p-6 card-hover border-t-4 border-purple-500">
+                    <i class="fas fa-database text-5xl text-purple-500 mb-4"></i>
+                    <h3 class="text-xl font-bold mb-3 text-gray-800">Archive Node</h3>
+                    <div class="mb-4">
+                        <span class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm font-semibold">For Explorers</span>
+                    </div>
+                    <ul class="text-sm text-gray-600 space-y-2 mb-4">
+                        <li>• ALL historical state</li>
+                        <li>• Query any past block</li>
+                        <li>• Deep analytics</li>
+                        <li>• Not for normal use</li>
+                    </ul>
+                    <div class="bg-purple-50 rounded p-3 text-xs">
+                        <p class="font-semibold text-purple-900">Storage:</p>
+                        <p class="text-purple-700">12-20+ TB (Geth)<br>2.5-6 TB (Erigon)</p>
+                    </div>
+                </div>
+
+                <!-- Light Client -->
+                <div class="bg-white rounded-lg shadow-lg p-6 card-hover border-t-4 border-yellow-500">
+                    <i class="fas fa-mobile-alt text-5xl text-yellow-500 mb-4"></i>
+                    <h3 class="text-xl font-bold mb-3 text-gray-800">Light Client</h3>
+                    <div class="mb-4">
+                        <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-semibold">Minimal Resources</span>
+                    </div>
+                    <ul class="text-sm text-gray-600 space-y-2 mb-4">
+                        <li>• Headers + proofs only</li>
+                        <li>• No full blocks</li>
+                        <li>• For wallets/mobile</li>
+                        <li>• Cannot serve data</li>
+                    </ul>
+                    <div class="bg-yellow-50 rounded p-3 text-xs">
+                        <p class="font-semibold text-yellow-900">Storage:</p>
+                        <p class="text-yellow-700">&lt;1 GB</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Hardware Requirements -->
+        <section class="mb-16">
+            <h2 class="text-4xl font-bold mb-8 flex items-center text-gray-800">
+                <i class="fas fa-microchip mr-3 text-purple-600"></i>
+                Hardware Requirements
+            </h2>
+            
+            <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                <table class="w-full">
+                    <thead class="bg-gradient-to-r from-purple-600 to-purple-700 text-white">
+                        <tr>
+                            <th class="px-6 py-4 text-left">Component</th>
+                            <th class="px-6 py-4 text-left">Minimum</th>
+                            <th class="px-6 py-4 text-left">Recommended</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-4 flex items-center font-semibold">
+                                <i class="fas fa-microchip text-blue-500 mr-2"></i>
+                                CPU
+                            </td>
+                            <td class="px-6 py-4">4 cores</td>
+                            <td class="px-6 py-4 text-green-700 font-semibold">6-8+ cores</td>
+                        </tr>
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-4 flex items-center font-semibold">
+                                <i class="fas fa-memory text-green-500 mr-2"></i>
+                                RAM
+                            </td>
+                            <td class="px-6 py-4">16 GB</td>
+                            <td class="px-6 py-4 text-green-700 font-semibold">32 GB</td>
+                        </tr>
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-4 flex items-center font-semibold">
+                                <i class="fas fa-hdd text-purple-500 mr-2"></i>
+                                Storage
+                            </td>
+                            <td class="px-6 py-4">2 TB NVMe SSD</td>
+                            <td class="px-6 py-4 text-green-700 font-semibold">4 TB NVMe SSD</td>
+                        </tr>
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-4 flex items-center font-semibold">
+                                <i class="fas fa-wifi text-orange-500 mr-2"></i>
+                                Bandwidth
+                            </td>
+                            <td class="px-6 py-4">25 Mbps</td>
+                            <td class="px-6 py-4 text-green-700 font-semibold">100+ Mbps</td>
+                        </tr>
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-4 flex items-center font-semibold">
+                                <i class="fas fa-chart-line text-red-500 mr-2"></i>
+                                Data/Month
+                            </td>
+                            <td class="px-6 py-4">1-2 TB</td>
+                            <td class="px-6 py-4 text-green-700 font-semibold">Unlimited</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div class="bg-red-50 border-l-4 border-red-500 p-6">
+                    <p class="text-red-800 flex items-start">
+                        <i class="fas fa-exclamation-triangle mr-3 text-2xl"></i>
+                        <span class="text-lg">
+                            <strong>Critical:</strong> SSD is REQUIRED (HDD is too slow). NVMe is strongly preferred. Storage grows ~50-100 GB/month.
+                        </span>
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Validator Economics -->
+        <section class="mb-16">
+            <h2 class="text-4xl font-bold mb-8 flex items-center text-gray-800">
+                <i class="fas fa-coins mr-3 text-purple-600"></i>
+                Validator Economics
+            </h2>
+            
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Rewards -->
+                <div class="bg-white rounded-lg shadow-lg p-8 border-t-4 border-green-500">
+                    <h3 class="text-2xl font-bold mb-6 flex items-center text-green-700">
+                        <i class="fas fa-arrow-up mr-3"></i>
+                        Rewards
+                    </h3>
+                    
+                    <div class="space-y-4">
+                        <div class="bg-green-50 rounded-lg p-4">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="font-semibold text-gray-700">Base Staking Yield</span>
+                                <span class="text-2xl font-bold text-green-600">3-4% APR</span>
+                            </div>
+                            <p class="text-sm text-gray-600">From attestations & proposals</p>
+                        </div>
+
+                        <div class="bg-green-50 rounded-lg p-4">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="font-semibold text-gray-700">Priority Fees (Tips)</span>
+                                <span class="text-xl font-bold text-green-600">Variable</span>
+                            </div>
+                            <p class="text-sm text-gray-600">Extra from users wanting faster txs</p>
+                        </div>
+
+                        <div class="bg-green-50 rounded-lg p-4">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="font-semibold text-gray-700">MEV (via MEV-Boost)</span>
+                                <span class="text-xl font-bold text-green-600">+20-50%</span>
+                            </div>
+                            <p class="text-sm text-gray-600">From transaction ordering</p>
+                        </div>
+
+                        <div class="bg-gradient-to-r from-green-600 to-green-700 rounded-lg p-4 text-white">
+                            <div class="flex items-center justify-between">
+                                <span class="font-bold text-lg">Realistic Total</span>
+                                <span class="text-3xl font-bold">4.5-5.5%</span>
+                            </div>
+                            <p class="text-sm text-green-100 mt-2">APR in ETH (not fiat)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Penalties -->
+                <div class="bg-white rounded-lg shadow-lg p-8 border-t-4 border-red-500">
+                    <h3 class="text-2xl font-bold mb-6 flex items-center text-red-700">
+                        <i class="fas fa-arrow-down mr-3"></i>
+                        Penalties
+                    </h3>
+                    
+                    <div class="space-y-4">
+                        <div class="bg-yellow-50 rounded-lg p-4 border-l-4 border-yellow-500">
+                            <h4 class="font-bold text-gray-800 mb-2">Inactivity Penalties</h4>
+                            <ul class="text-sm text-gray-600 space-y-1">
+                                <li>• Miss attestations = small penalty</li>
+                                <li>• Extended downtime = gradual leak</li>
+                                <li>• Recoverable with uptime</li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-red-50 rounded-lg p-4 border-l-4 border-red-600">
+                            <h4 class="font-bold text-red-800 mb-3 flex items-center">
+                                <i class="fas fa-skull-crossbones mr-2"></i>
+                                Slashing (SEVERE)
+                            </h4>
+                            <p class="text-sm text-gray-700 mb-3">Provably malicious behavior:</p>
+                            <ul class="text-sm text-red-700 space-y-1 mb-3">
+                                <li>• Double proposal (2 blocks, same slot)</li>
+                                <li>• Surround vote (contradictory attestations)</li>
+                                <li>• Double vote (2 attestations, same slot)</li>
+                            </ul>
+                            <div class="bg-red-100 rounded p-3">
+                                <p class="text-red-900 font-bold">Consequences:</p>
+                                <p class="text-sm text-red-800">~1 ETH penalty + forced exit</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-blue-50 rounded-lg p-4 border-l-4 border-blue-500">
+                            <h4 class="font-bold text-blue-900 mb-2">
+                                <i class="fas fa-shield-alt mr-2"></i>
+                                Avoid Slashing
+                            </h4>
+                            <ul class="text-sm text-gray-600 space-y-1">
+                                <li>• Never run same keys on 2+ machines</li>
+                                <li>• Use slashing protection databases</li>
+                                <li>• Proper backup/failover procedures</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quick Stats -->
+        <section class="mb-16">
+            <h2 class="text-4xl font-bold mb-8 flex items-center text-gray-800">
+                <i class="fas fa-chart-bar mr-3 text-purple-600"></i>
+                Quick Stats
+            </h2>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg shadow-lg p-6 text-white">
+                    <i class="fas fa-clock text-4xl mb-3 opacity-80"></i>
+                    <p class="text-blue-100 text-sm uppercase tracking-wide mb-1">Block Time</p>
+                    <p class="text-4xl font-bold">~12 sec</p>
+                </div>
+
+                <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-lg shadow-lg p-6 text-white">
+                    <i class="fas fa-layer-group text-4xl mb-3 opacity-80"></i>
+                    <p class="text-green-100 text-sm uppercase tracking-wide mb-1">Epoch Duration</p>
+                    <p class="text-4xl font-bold">~6.4 min</p>
+                    <p class="text-sm text-green-100 mt-1">(32 slots)</p>
+                </div>
+
+                <div class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg shadow-lg p-6 text-white">
+                    <i class="fas fa-lock text-4xl mb-3 opacity-80"></i>
+                    <p class="text-purple-100 text-sm uppercase tracking-wide mb-1">Finality Time</p>
+                    <p class="text-4xl font-bold">~15 min</p>
+                    <p class="text-sm text-purple-100 mt-1">(2-3 epochs)</p>
+                </div>
+
+                <div class="bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg shadow-lg p-6 text-white">
+                    <i class="fas fa-coins text-4xl mb-3 opacity-80"></i>
+                    <p class="text-orange-100 text-sm uppercase tracking-wide mb-1">Stake Required</p>
+                    <p class="text-4xl font-bold">32 ETH</p>
+                    <p class="text-sm text-orange-100 mt-1">per validator</p>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="gradient-bg text-white py-8 mt-16">
+        <div class="container mx-auto px-4 text-center">
+            <p class="text-lg mb-2">
+                <i class="fas fa-book-open mr-2"></i>
+                Visual guide for understanding Ethereum's Proof of Stake architecture
+            </p>
+            <p class="text-purple-200 text-sm">
+                Based on Ethereum Node Operations Guide | December 2025
+            </p>
+        </div>
+    </footer>
+
+</body>
+</html>
