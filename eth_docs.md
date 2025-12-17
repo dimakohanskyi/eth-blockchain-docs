@@ -7,9 +7,10 @@
 2. [How Ethereum Works Today](#how-ethereum-works-today)
 3. [Node Types & Roles](#node-types--roles)
 4. [Software Stack](#software-stack)
-5. [Hardware & Network Requirements](#hardware--network-requirements)
-6. [Validator Operations](#validator-operations)
-7. [Economics & Rewards](#economics--rewards)
+5. [Database Architectures](#database-architectures)
+6. [Hardware & Network Requirements](#hardware--network-requirements)
+7. [Validator Operations](#validator-operations)
+8. [Economics & Rewards](#economics--rewards)
 9. [Common Questions](#common-questions)
 10. [Quick Reference](#quick-reference)
 
@@ -243,6 +244,64 @@ After enough attestations (about ⅔ of total staked ETH) agree on checkpoints:
 | **Reth** | Rust | New, high performance, actively developing | 400-700 GB |
 
 **Archive sizes:** Geth >12TB, Nethermind ~8-12TB, Erigon ~2.5-6TB, Besu ~10-15TB
+
+## Database Architectures
+
+Each execution client uses different database technologies to store blockchain data, which significantly impacts performance, disk usage, and sync times.
+
+**Geth: LevelDB or Pebble**
+- **LevelDB** (traditional): Google's key-value store with LSM-tree architecture
+  - Battle-tested since Ethereum's launch
+  - Good write performance, slower random reads
+  - Single-threaded compaction can cause I/O spikes
+- **Pebble** (newer): Modern RocksDB-inspired alternative
+  - Better concurrent compaction, ~10-15% faster
+  - Improved write amplification
+  - Becoming the recommended default
+
+**Nethermind: RocksDB**
+- High-performance key-value store (Facebook/Meta)
+- Multi-threaded compaction (better than LevelDB)
+- Highly configurable for enterprise use cases
+- Uses separate column families for different data types
+- Excellent for high-load RPC services
+
+**Erigon: MDBX (Revolutionary Approach)**
+- **Game changer**: Flat storage model instead of traditional trie storage
+- MDBX = Modified Memory-Mapped Database (based on LMDB)
+- Memory-mapped files for ultra-fast zero-copy reads
+- **Key innovation**: Doesn't store Merkle tries on disk—reconstructs them on-the-fly
+- Stores account state in flat tables with temporal history tracking
+- **Why so efficient?** Eliminates redundant trie node storage, better compression
+- **Best for archive nodes**: 2.5-6 TB vs 12+ TB for other clients
+- Requires more RAM due to memory mapping
+
+**Besu: RocksDB or Bonsai Tries**
+- Standard mode: RocksDB with traditional forest-of-tries storage
+- **Bonsai Tries** (newer): Flat key-value storage with on-demand trie generation
+  - Dramatically reduces disk usage (similar to Erigon approach)
+  - More efficient than traditional trie storage
+- Enterprise features: private transactions, permissioned networks
+
+**Reth: MDBX**
+- Uses Erigon's proven database architecture
+- Written in Rust for memory safety and performance
+- Modular, database-first design philosophy
+- Expected to match or exceed Erigon's efficiency
+- Optimized for modern NVMe SSDs
+
+**Storage Philosophy Comparison:**
+
+| Approach | Clients | How It Works | Pros | Cons |
+|----------|---------|--------------|------|------|
+| **Trie-Based** | Geth, Nethermind, Besu (default) | Stores Merkle Patricia Trie nodes directly on disk | Straightforward, cryptographically verifiable | Higher disk usage, slower queries |
+| **Flat Storage** | Erigon, Reth, Besu (Bonsai) | Stores raw key-value pairs, reconstructs tries when needed | 50-70% less disk space, faster for archive | Requires computation for proof generation |
+
+**Practical Implications:**
+- **For validators**: All databases work fine; choose based on stability vs efficiency
+- **For RPC nodes**: Nethermind (throughput) or Geth (compatibility)
+- **For archive nodes**: Erigon is the clear winner (2.5-6 TB vs 12+ TB)
+- **For limited disk space**: Erigon, Reth, or Besu with Bonsai Tries
 
 ### Consensus Clients (CL)
 
@@ -568,3 +627,17 @@ A: Maximal Extractable Value - additional profit from ordering transactions opti
 **Mempool**: Pool of pending transactions waiting for inclusion in blocks.
 
 **JSON-RPC**: API that applications use to interact with your node.
+
+**LevelDB**: Google's key-value database using LSM-tree architecture; used by Geth (traditional option).
+
+**Pebble**: Modern key-value database inspired by RocksDB; Geth's recommended database option.
+
+**RocksDB**: High-performance key-value store by Meta/Facebook; used by Nethermind and Besu.
+
+**MDBX**: Modified Memory-Mapped Database; used by Erigon and Reth for ultra-efficient storage.
+
+**Trie-Based Storage**: Traditional approach storing Merkle Patricia Trie nodes directly on disk.
+
+**Flat Storage**: Modern approach storing raw key-value pairs, reconstructing tries on-demand; 50-70% more efficient.
+
+**Bonsai Tries**: Besu's flat storage implementation with on-demand trie generation.
